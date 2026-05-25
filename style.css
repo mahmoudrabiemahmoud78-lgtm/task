@@ -1,0 +1,160 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+nav{
+    background-color: rgba(204, 202, 202, 0.836);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    font-size: large;
+}
+nav ul{
+    display: flex;
+    width: 60%;
+    text-transform: capitalize;
+    
+    justify-content: space-around;
+}
+nav ul li{
+    list-style: none;
+}
+nav ul li a{
+    position: relative;
+    color: black;
+    text-decoration: none;
+}
+nav ul li a::after{
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    display: block;
+    transition: 1s;
+    width: 0%;
+    height: 2px;
+    background-color: black;
+}
+nav ul li a:hover:after{
+    content: '';
+    position: relative;
+    bottom: -5px;
+    width: 100%;
+    height: 2px;
+    background-color: black;
+}
+header{
+    background-color: rebeccapurple;
+    height: 80vh;
+    background-image: url(download\ \(3\).jfif);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+   
+    
+
+}
+header > h1{
+    color: rgb(243, 240, 240);
+   font-size: 60px;
+}
+header > p{
+    color: white;
+
+}
+#content > h1{
+    text-align: center;
+    margin: 40px 0;
+}
+#products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(100px,230px));
+    justify-content: center;
+    gap: 50px;
+    
+}
+#products > div {
+    background: white;
+    border-radius: 10px;
+    height: fit-content;
+    box-shadow: 0 0 5px 2px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    
+}
+#products > div :has(button){
+    padding: 8px;
+    
+}
+
+#products > div:hover {
+    transform: translateY(-5px);
+}
+
+#products img {
+    width: 100%;
+    height: 200px;
+    object-fit: fill;
+    
+}
+#products h2 {
+    font-size: 18px;
+    margin: 10px;
+}
+
+#products h4 {
+    margin: 10px;
+    color: green;
+}
+.number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    /* background-color: red; */
+}
+
+.number button {
+    
+    border: none;
+  
+    
+    width: 60px;
+    background: rgb(15, 15, 15);
+    color: rgb(253, 250, 250);
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: large;
+    height: 30px;
+   
+}
+
+.number span {
+    font-size: 18px;
+    /* background-color: aqua; */
+    width: fit-content;
+}
+#products > div > div > button {
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background: #0e0d0d;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 6px;
+}
+
+#products button:hover {
+    background: #333;
+}
+.haddin{
+    display: none;
+}
