@@ -160,11 +160,13 @@ h1{
 
         <h1>Order now</h1>
 
-        <input type="text" required placeholder="Your name">
+        <input type="text" minlength="15" required placeholder="Enter your full name (three parts or four)">
 
-        <input type="text" required placeholder="Your address">
+        <input type="text" required placeholder="Enter full address">
 
         <input type="text" required placeholder="Phone number">
+
+        <input type="text" required placeholder="whats number">
         
         <select id="governorate" required>
     <option value="" selected disabled>Choose Governorate</option>
@@ -199,21 +201,30 @@ h1{
 </select>
         <span id="span">00</span>
        <div class="weights-form">
+<label>
+  <input type="radio" name="weight" value="1">
+  1 kg
+</label>
 
-    <label>
-        <input type="radio" name="weight" value="1 كيلو">
-          1 kg
-    </label>
+<label>
+  <input type="radio" name="weight" value="0.5">
+  0.5 kg
+</label>
 
-    <label>
-        <input type="radio" name="weight" value="نصف كيلو">
-         0.5 kg
-    </label>
+<label>
+  <input type="radio" name="weight" value="0.25">
+  0.25 kg
+</label>
 
-    <label>
-        <input type="radio" name="weight" value="ربع كيلو">
-         0.25 kg
-    </label>
+<label>
+  <input type="radio" name="weight" value="1.5">
+  1.5 kg
+</label>
+
+<label>
+  <input type="radio" name="weight" value="0.8">
+  0.8 kg
+</label>
 
 </div>
         <textarea placeholder="Notes"></textarea>
@@ -226,78 +237,94 @@ h1{
     </div>
 </form>
 <script>
- 
+console.log("Cart:", localStorage.getItem("cart"));
 
-console.log(localStorage.getItem("cart"));
-
-/* حساب السعر وعرضه في span */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let weightFactor = 1;
 
-let totalPrice = 0;
+/* ====== BASE TOTAL ====== */
+function getBaseTotal() {
+    let total = 0;
 
-cart.forEach(p => {
-    let price = parseFloat(p.price.replace("$", ""));
-    totalPrice += price * p.qty;
+    cart.forEach(p => {
+        let price = parseFloat(p.price.replace("$", ""));
+        total += price * p.qty;
+    });
+
+    return total;
+}
+
+/* ====== UPDATE TOTAL ====== */
+function updateTotal() {
+    let baseTotal = getBaseTotal();
+    let finalTotal = baseTotal * weightFactor;
+
+    document.getElementById("span").textContent = finalTotal.toFixed(2);
+}
+
+updateTotal();
+
+/* ====== WEIGHT CHANGE ====== */
+document.querySelectorAll("input[name='weight']").forEach(radio => {
+    radio.addEventListener("change", (e) => {
+        weightFactor = parseFloat(e.target.value);
+        updateTotal();
+    });
 });
 
-document.getElementById("span").textContent = totalPrice;
-
-
-/* ارسال الطلب */
+/* ====== ORDER ====== */
 document.getElementById("confirm").addEventListener("click", (e) => {
-
     e.preventDefault();
 
-    let name = document.querySelector("input[placeholder='Your name']").value;
-
-    let address = document.querySelector("input[placeholder='Your address']").value;
-
-    let phoneUser = document.querySelector("input[placeholder='Phone number']").value;
-
+    let name = document.querySelector("input[placeholder*='Enter your full name (three parts or four)']").value;
+    let address = document.querySelector("input[placeholder*='Enter full address']").value;
+    let phone = document.querySelector("input[placeholder*='Phone number']").value;
+    let whatsapp = document.querySelector("input[placeholder*='whats number']").value;
     let governorate = document.getElementById("governorate").value;
-
     let notes = document.querySelector("textarea").value;
 
-    let msg = `New Order:\n`;
+    let selectedWeight = document.querySelector("input[name='weight']:checked");
+
+    if (!selectedWeight) {
+        alert("Please select a weight");
+        return;
+    }
+
+    let baseTotal = getBaseTotal();
+    let finalTotal = baseTotal * weightFactor;
+
+    let msg = `New Order\n\n`;
 
     msg += `Name: ${name}\n`;
-
     msg += `Address: ${address}\n`;
-
-    msg += `Phone: ${phoneUser}\n`;
-
+    msg += `Phone: ${phone}\n`;
+    msg += `WhatsApp: ${whatsapp}\n`;
     msg += `Governorate: ${governorate}\n`;
-
     msg += `Notes: ${notes}\n\n`;
 
     msg += `--- Products ---\n`;
 
-    let total = 0;
-
     cart.forEach(p => {
-
         let price = parseFloat(p.price.replace("$", ""));
+        let itemTotal = price * p.qty * weightFactor;
 
-        let itemTotal = price * p.qty;
-
-        total += itemTotal;
-
-        msg += `${p.name} - ${p.price} x ${p.qty} = ${itemTotal}$\n`;
+        msg += `${p.name} - ${p.price} x ${p.qty} x ${weightFactor} = ${itemTotal.toFixed(2)}$\n`;
     });
 
-    msg += `\nTotal: ${total}$`;
+    msg += `\nBase Total: ${baseTotal.toFixed(2)}$`;
+    msg += `\nFinal Total: ${finalTotal.toFixed(2)}$`;
 
     let ownerPhone = "201552701888";
 
-    window.open(`https://wa.me/${ownerPhone}?text=${encodeURIComponent(msg)}`, "_blank");
+   if (name !='' && phone != '' && whatsapp != '' && address != '' && governorate!='') {
+         window.open(
+        `https://wa.me/${ownerPhone}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+    );
+   }
 
     localStorage.removeItem("cart");
-
-
 });
-
-
-
     
 </script>
 
