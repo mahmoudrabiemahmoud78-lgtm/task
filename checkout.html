@@ -10,9 +10,23 @@ body{
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     background: #f5f5f5;
+    
 }
 h1{
     text-align: center;
+}
+#span{
+    background-color: rgb(235, 247, 247);
+   
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;   
+    display: block;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+#span::after{
+    content: ' $';
 }
 #order-page{
   height: fit-content;
@@ -39,6 +53,7 @@ h1{
 
     color: #222;
 }
+.order-box select,
 
 .order-box input,
 .order-box textarea{
@@ -92,6 +107,43 @@ h1{
 .order-box button:hover{
     background: #372fcf;
 }
+.weights-form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    background: rgb(248, 247, 247);
+    padding: 15px;
+
+    border-radius: 10px;
+}
+
+.weights-form label{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.weights-form label:hover{
+    background: #dee6e9;
+
+     transform: translateY(-5px);
+}
+
+.weights-form input{
+    width: 18px;
+    height: 18px;
+}
     </style>
 </head>
 <body>
@@ -110,8 +162,59 @@ h1{
         <input type="text" required placeholder="Your address">
 
         <input type="text" required placeholder="Phone number">
+        
+        <select id="governorate" required>
+    <option value="" selected disabled>Choose Governorate</option>
 
+    <option value="القاهرة">القاهرة</option>
+    <option value="الجيزة">الجيزة</option>
+    <option value="الإسكندرية">الإسكندرية</option>
+    <option value="الدقهلية">الدقهلية</option>
+    <option value="البحر الأحمر">البحر الأحمر</option>
+    <option value="البحيرة">البحيرة</option>
+    <option value="الفيوم">الفيوم</option>
+    <option value="الغربية">الغربية</option>
+    <option value="الإسماعيلية">الإسماعيلية</option>
+    <option value="المنوفية">المنوفية</option>
+    <option value="المنيا">المنيا</option>
+    <option value="القليوبية">القليوبية</option>
+    <option value="الوادي الجديد">الوادي الجديد</option>
+    <option value="السويس">السويس</option>
+    <option value="أسوان">أسوان</option>
+    <option value="أسيوط">أسيوط</option>
+    <option value="بني سويف">بني سويف</option>
+    <option value="بورسعيد">بورسعيد</option>
+    <option value="دمياط">دمياط</option>
+    <option value="الشرقية">الشرقية</option>
+    <option value="جنوب سيناء">جنوب سيناء</option>
+    <option value="كفر الشيخ">كفر الشيخ</option>
+    <option value="مطروح">مطروح</option>
+    <option value="الأقصر">الأقصر</option>
+    <option value="قنا">قنا</option>
+    <option value="شمال سيناء">شمال سيناء</option>
+    <option value="سوهاج">سوهاج</option>
+</select>
+        <span id="span">00</span>
+       <div class="weights-form">
+
+    <label>
+        <input type="radio" name="weight" value="1 كيلو">
+          1 kg
+    </label>
+
+    <label>
+        <input type="radio" name="weight" value="نصف كيلو">
+         0.5 kg
+    </label>
+
+    <label>
+        <input type="radio" name="weight" value="ربع كيلو">
+         0.25 kg
+    </label>
+
+</div>
         <textarea placeholder="Notes"></textarea>
+        
 
         <button  id="confirm">Confirm order</button>
 
@@ -120,46 +223,78 @@ h1{
     </div>
 </form>
 <script>
-    console.log(localStorage.getItem("cart"));
-   document.getElementById("confirm").addEventListener("click", (e) => {
+ 
+
+console.log(localStorage.getItem("cart"));
+
+/* حساب السعر وعرضه في span */
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let totalPrice = 0;
+
+cart.forEach(p => {
+    let price = parseFloat(p.price.replace("$", ""));
+    totalPrice += price * p.qty;
+});
+
+document.getElementById("span").textContent = totalPrice;
+
+
+/* ارسال الطلب */
+document.getElementById("confirm").addEventListener("click", (e) => {
+
     e.preventDefault();
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
     let name = document.querySelector("input[placeholder='Your name']").value;
+
     let address = document.querySelector("input[placeholder='Your address']").value;
+
     let phoneUser = document.querySelector("input[placeholder='Phone number']").value;
+
+    let governorate = document.getElementById("governorate").value;
+
     let notes = document.querySelector("textarea").value;
 
-    let msg = `New Order:`;
+    let msg = `New Order:\n`;
 
-    msg += `Name: ${name}|   `;
-    msg += `Address: ${address}|    `;
-    msg += `Phone: ${phoneUser}|  `;
-    msg += `Notes: ${notes}|  `;
+    msg += `Name: ${name}\n`;
 
-    msg += `--- Products ---`;
+    msg += `Address: ${address}\n`;
+
+    msg += `Phone: ${phoneUser}\n`;
+
+    msg += `Governorate: ${governorate}\n`;
+
+    msg += `Notes: ${notes}\n\n`;
+
+    msg += `--- Products ---\n`;
 
     let total = 0;
 
     cart.forEach(p => {
 
         let price = parseFloat(p.price.replace("$", ""));
+
         let itemTotal = price * p.qty;
 
         total += itemTotal;
 
-        msg += `${p.name} - ${p.price} x ${p.qty} = ${itemTotal}`;
+        msg += `${p.name} - ${p.price} x ${p.qty} = ${itemTotal}$\n`;
     });
 
-    msg += `Total: ${total}$`;
+    msg += `\nTotal: ${total}$`;
 
-    let ownerPhone = "201552701888";
+    let ownerPhone = "201559452702";
 
-    window.open(`https://wa.me/${ownerPhone}?text=${msg}`, "_blank");
+    window.open(`https://wa.me/${ownerPhone}?text=${encodeURIComponent(msg)}`, "_blank");
 
     localStorage.removeItem("cart");
+
+
 });
+
+
+
     
 </script>
 
